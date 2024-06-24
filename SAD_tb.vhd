@@ -53,15 +53,15 @@ ARCHITECTURE BEV OF SAD_tb IS
         WE_B <= '1'; 
         Wait for 20 ns;
 
-        Data_A <= "00101001"; 
-	Data_B <= "00101000";
+        Data_A <= "00000101"; 
+	Data_B <= "11111101";
         Addr_in <= "0001"; 
 	WE_A <= '1'; 
         WE_B <= '1'; 
 	Wait for 20 ns;
 
-	Data_A <= "00011100";
-	Data_B <= "00011101"; 
+	Data_A <= "10011100";
+	Data_B <= "10011101"; 
 	Addr_in <= "0010"; 
 	WE_A <= '1'; 
         WE_B <= '1';

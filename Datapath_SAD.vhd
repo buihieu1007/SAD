@@ -26,12 +26,11 @@ ENTITY Datapath_SAD IS
 END Datapath_SAD;
 
 ARCHITECTURE RTL OF Datapath_SAD IS
- SIGNAL Sum, Din_A, Dout_A, Din_B, Dout_B, Abs_AB: STD_LOGIC_VECTOR (DATA_WIDTH - 1 downto 0);
+ SIGNAL Sum, Din_A, Dout_A, Din_B, Dout_B, Abs_A, Abs_B, Sum_AB, Minus_AB, Abs_AB: STD_LOGIC_VECTOR (DATA_WIDTH - 1 downto 0);
  SIGNAL Z_AB, Q_SUM: STD_LOGIC_VECTOR ( 2 * DATA_WIDTH - 1 downto 0);
  SIGNAL Addr_ij, Addr_fin: STD_LOGIC_VECTOR (ADDR_WIDTH - 1 downto 0);
  SIGNAL i,j : STD_LOGIC_VECTOR (ADDR_WIDTH - 1 downto 0);
- SIGNAL Sign: STD_LOGIC;
- SIGNAL Comp_AB: STD_LOGIC;
+ SIGNAL Comp_AB, Sign: STD_LOGIC;
 
  BEGIN
         Zi <= '1' WHEN conv_integer(i) < M ELSE '0';
@@ -39,10 +38,16 @@ ARCHITECTURE RTL OF Datapath_SAD IS
 
 	Addr_ij <= conv_std_logic_vector(conv_integer(i) * M + conv_integer(j), ADDR_WIDTH);
 	Addr_fin <= ADDR_in WHEN Start = '0' ELSE Addr_ij;
-
-	Comp_AB <= '1' WHEN Dout_A(6 DOWNTO 0) > Dout_B(6 DOWNTO 0) ELSE '0';
-	Sign  <= Dout_A(7) XOR Dout_B(7);
-	Abs_AB <= Sign&(Dout_A(6 DOWNTO 0) - Dout_B(6 DOWNTO 0)) WHEN Comp_AB ='1' ELSE Sign&( Dout_B(6 DOWNTO 0) - Dout_A(6 DOWNTO 0) );
+	
+	Abs_A <= Dout_A WHEN Dout_A(7) = '0' ELSE "00000000" - Dout_A;
+	Abs_B <= Dout_B WHEN Dout_B(7) = '0' ELSE "00000000" - Dout_B;
+		
+	Sign <= '1' WHEN Dout_A(7) = Dout_B(7) ELSE '0';
+	
+	Comp_AB <= '1' WHEN Abs_A > Abs_B ELSE '0';
+	Sum_AB <= Abs_A + Abs_B;
+	Minus_AB <= Abs_A - Abs_B WHEN Comp_AB = '1' ELSE Abs_B - Abs_A ;
+	Abs_AB <= Sum_AB WHEN Sign ='0' ELSE Minus_AB;
 
 	Din_A <= Data_A WHEN Start = '0' ELSE "00000000";
 	Din_B <= Data_B WHEN Start = '0' ELSE "00000000";
