@@ -72,7 +72,7 @@ END COMPONENT;
 COMPONENT sad IS
 GENERIC (
     DATA_WIDTH        :     integer   := 8;    
-    ADDR_WIDTH        :     integer   := 4vopt +acc SAD_tb -o SAD_tb_opt     
+    ADDR_WIDTH        :     integer   := 4
     );
  PORT (
 	RST, CLK: IN STD_LOGIC;
