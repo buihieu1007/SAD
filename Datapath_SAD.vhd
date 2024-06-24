@@ -30,6 +30,7 @@ ARCHITECTURE RTL OF Datapath_SAD IS
  SIGNAL Z_AB, Q_SUM: STD_LOGIC_VECTOR ( 2 * DATA_WIDTH - 1 downto 0);
  SIGNAL Addr_ij, Addr_fin: STD_LOGIC_VECTOR (ADDR_WIDTH - 1 downto 0);
  SIGNAL i,j : STD_LOGIC_VECTOR (ADDR_WIDTH - 1 downto 0);
+ SIGNAL Sign: STD_LOGIC;
  SIGNAL Comp_AB: STD_LOGIC;
 
  BEGIN
@@ -39,8 +40,9 @@ ARCHITECTURE RTL OF Datapath_SAD IS
 	Addr_ij <= conv_std_logic_vector(conv_integer(i) * M + conv_integer(j), ADDR_WIDTH);
 	Addr_fin <= ADDR_in WHEN Start = '0' ELSE Addr_ij;
 
-	Comp_AB <= '1' WHEN Dout_A > Dout_B ELSE '0';
-	Abs_AB <= Dout_A - Dout_B WHEN Comp_AB ='1' ELSE Dout_B - Dout_A;
+	Comp_AB <= '1' WHEN Dout_A(6 DOWNTO 0) > Dout_B(6 DOWNTO 0) ELSE '0';
+	Sign  <= Dout_A(7) XOR Dout_B(7);
+	Abs_AB <= Sign&(Dout_A(6 DOWNTO 0) - Dout_B(6 DOWNTO 0)) WHEN Comp_AB ='1' ELSE Sign&( Dout_B(6 DOWNTO 0) - Dout_A(6 DOWNTO 0) );
 
 	Din_A <= Data_A WHEN Start = '0' ELSE "00000000";
 	Din_B <= Data_B WHEN Start = '0' ELSE "00000000";
