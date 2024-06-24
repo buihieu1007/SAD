@@ -53,7 +53,7 @@ ARCHITECTURE RTL OF Datapath_SAD IS
 	Din_B <= Data_B WHEN Start = '0' ELSE "00000000";
 	Z_AB <= "00000000"&Abs_AB + Q_SUM;
 		
-	Data_out <= Z_AB;
+	Data_out <= Q_Sum;
 	
 	----------
 	REG_SUM: Regn
